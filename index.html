@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Generator</title>
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    /* Base Styles */
+    body {
+      font-family: 'Avenir', Arial, sans-serif;
+      background-color: #f8f9fa; /* Light gray background */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .main-container {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 1200px;
+      margin: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      width: 100%;
+    }
+
+    /* Generator Panel */
+    .generator {
+      width: 50%;
+      padding: 40px;
+      box-sizing: border-box;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .generator h1 {
+      font-size: 28px;
+      color: #1861f5;
+      margin-bottom: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .generator p {
+      font-size: 14px;
+      color: #555;
+      text-align: center;
+      margin-bottom: 20px;
+      opacity: 0.5; /* Apply opacity 50% */
+    }
+
+    .generator label {
+      display: inline-block;
+      font-weight: bold;
+      color: #333333;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .generator .cta-section {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .generator input[type="checkbox"] {
+      margin-right: 12px;
+    }
+
+    .generator input, .generator textarea, .generator button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      box-sizing: border-box;
+      background-color: #f9f9f9;
+    }
+
+    .generator textarea {
+      resize: none;
+      height: 120px;
+    }
+
+    .generator button {
+      background-color: #1861f5;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 6px;
+      gap: 8px;
+    }
+
+    .generator button:hover {
+      background-color: #1a298e;
+    }
+
+    .generator button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .generator button i {
+      font-size: 10px; /* Icon size */
+      vertical-align: middle;
+    }
+
+    /* Preview Panel */
+    .preview {
+      width: 50%;
+      background-color: #f8f9fa;
+      padding: 40px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .preview h2 {
+      font-size: 22px;
+      color: #333333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .preview-container {
+      width: 90%; /* Wider container */
+      background-color: #ffffff;
+      border: 1px solid #dddddd;
+      border-radius: 12px;
+      padding: 20px;
+      overflow: auto;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .buttons button {
+      padding: 5px 10px; /* Smaller padding for compact buttons */
+      font-size: 14px;
+      background-color: #1861f5;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .buttons button:hover {
+      background-color: #1a298e;
+    }
+
+    /* Toast Notification */
+    #toast {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1861f5;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      .generator, .preview {
+        width: 100%;
+        padding: 20px;
+      }
+
+      .preview-container {
+        width: 100%; /* Full width on smaller screens */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <!-- Generator Panel -->
+    <div class="generator">
+      <h1>Email Wizard v1.0</h1>
+      <p>Tool compiled by Surya Shrestha 2024.</p>
+      <form id="emailerForm">
+        <label for="bannerUpload">Upload Header Banner</label>
+        <input type="file" id="bannerUpload" accept="image/*" required>
+
+        <label for="body">Body Text</label>
+        <textarea id="body" placeholder="Enter email content"></textarea>
+
+        <div class="cta-section">
+          
+          <label for="ctaToggle">Include Call-to-Action (CTA)</label>
+          <input type="checkbox" id="ctaToggle"> 
+        </div>
+
+        <input type="text" id="ctaText" placeholder="CTA Text" disabled>
+        <input type="url" id="ctaLink" placeholder="CTA Link" disabled>
+
+        <button type="button" onclick="generatePreview()">Generate Preview</button>
+      </form>
+    </div>
+
+    <!-- Preview Panel -->
+    <div class="preview">
+      <h2>Email Preview</h2>
+      <div id="previewArea" class="preview-container"></div>
+      <div class="buttons">
+        <button id="copyPreviewButton" onclick="copyPreview()" disabled>
+          <i class="fa fa-copy"></i> Copy Preview
+        </button>
+        <button id="downloadButton" onclick="downloadMailer()" disabled>
+          <i class="fa fa-download"></i> Download HTML
+        </button>
+        <button onclick="shareFeedback()">
+          <i class="fa fa-comment"></i> Share Feedback
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast">Copied! Paste into Outlook using "Keep Source Formatting".</div>
+
+  <script>
+    const bannerUpload = document.getElementById("bannerUpload");
+    const ctaToggle = document.getElementById("ctaToggle");
+    const ctaText = document.getElementById("ctaText");
+    const ctaLink = document.getElementById("ctaLink");
+    const toast = document.getElementById("toast");
+    let bannerDataUrl = "";
+
+    // Enable or disable CTA fields based on checkbox
+    ctaToggle.addEventListener("change", () => {
+      const isChecked = ctaToggle.checked;
+      ctaText.disabled = !isChecked;
+      ctaLink.disabled = !isChecked;
+    });
+
+    // Handle banner upload
+    bannerUpload.addEventListener("change", () => {
+      const file = bannerUpload.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          bannerDataUrl = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Generate email preview
+    function generatePreview() {
+      const bodyContent = document.getElementById("body").value;
+      const ctaEnabled = ctaToggle.checked;
+      const ctaHTML = ctaEnabled
+        ? `<p style="text-align: center; margin-top: 20px;">
+             <a href="${ctaLink.value}" style="display: inline-block; padding: 12px 24px; background-color: #1861f5; color: #fff; text-decoration: none; border-radius: 4px;">${ctaText.value}</a>
+           </p>`
+        : "";
+
+      if (!bannerDataUrl) {
+        alert("Please upload a banner image.");
+        return;
+      }
+
+      const emailHTML = `
+        <table width="100%" style="background-color: #f8f9fa; padding: 20px;">
+          <tr>
+            <td align="center">
+              <table width="600" style="background-color: #ffffff; border: 1px solid #dddddd; border-spacing: 0;">
+                <tr>
+                  <td style="text-align: center; padding: 0;">
+                    <img src="${bannerDataUrl}" alt="Banner" style="width: 100%; max-width: 600px; height: auto; display: block;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 20px; font-family: 'Avenir', Arial, sans-serif; color: #333333; font-size: 16px; line-height: 1.6;">
+                    ${bodyContent.replace(/\n/g, "<br>")}
+                  </td>
+                </tr>
+                ${ctaHTML}
+              </table>
+            </td>
+          </tr>
+        </table>
+      `;
+
+      document.getElementById("previewArea").innerHTML = emailHTML;
+
+      // Enable the Copy Preview and Download HTML buttons
+      document.getElementById("copyPreviewButton").disabled = false;
+      document.getElementById("downloadButton").disabled = false;
+    }
+
+    // Copy preview to clipboard
+    function copyPreview() {
+      const previewArea = document.getElementById("previewArea");
+      const range = document.createRange();
+      range.selectNodeContents(previewArea);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      try {
+        document.execCommand("copy");
+
+        // Show toast notification
+        toast.style.display = "block";
+        setTimeout(() => (toast.style.display = "none"), 4000);
+      } catch (err) {
+        console.error("Failed to copy preview:", err);
+        alert("Something went wrong while copying. Please try again.");
+      }
+    }
+
+    // Download mailer as HTML file
+    function downloadMailer() {
+      const previewArea = document.getElementById("previewArea").innerHTML;
+      const blob = new Blob([previewArea], { type: "text/html" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "mailer.html";
+      link.click();
+    }
+
+    // Open mail client to send feedback
+    function shareFeedback() {
+      const subject = "Feedback on Email Generator Tool";
+      const body = "Please share your feedback here.";
+      const mailto = `mailto:surya.shrestha@epsilon.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
+    }
+  </script>
+</body>
+</html>
+
